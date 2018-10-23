@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.test.dao.ClassDao">
+
+	<resultMap type="org.test.model.Classes" id="ClassResultMap">
+		<id property="id" column="c_id"/>
+		<result property="name" column="c_name"/>
+		<association property="teacher" javaType="org.test.model.Teacher">
+			<id property="id" column="t_id"/>
+			<result property="name" column="t_name"/>
+		</association>
+		
+		<collection property="students" ofType="org.test.model.Student">
+			<id property="id" column="s_id"/>
+			<result property="name" column="s_name"/>
+		</collection>
+	</resultMap>
+	
+	<select id="getClass" parameterType="int" resultMap="ClassResultMap">
+		SELECT * FROM class c,teacher t,student s WHERE c.teacher_id=t.t_id AND c.c_id=s.class_id AND c.c_id=#{id}
+	</select>
+	
+	
+	<select id="getUserCount" parameterMap="getUserCountMap" statementType="CALLABLE">
+		CALL mybatis.ges_user_count(?,?)
+	</select>
+	
+	<parameterMap type="java.util.Map" id="getUserCountMap">
+		<parameter property="sexid" mode="IN" jdbcType="INTEGER"/>
+		<parameter property="usercount" mode="OUT" jdbcType="INTEGER"/>
+	</parameterMap>
+	
+</mapper>
